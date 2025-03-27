@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Traffic Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #000428, #004e92);
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 90%;
+            max-width: 1300px;
+            gap: 20px;
+        }
+        .traffic-light {
+            width: 80px;
+            background: black;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        .light {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: grey;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .content {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 80%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        .card {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            text-transform: uppercase;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            text-align: center;
+        }
+        .card span {
+            display: block;
+            font-size: 2em;
+            margin-top: 10px;
+            color: #ffcc00;
+        }
+        .video-map-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .video-container, .map-container {
+            width: 400px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            padding: 10px;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="traffic-light">
+            <div class="light" id="red"></div>
+            <div class="light" id="yellow"></div>
+            <div class="light" id="green"></div>
+        </div>
+        <div class="content">
+            <h1>AI Powered Smart Traffic Management</h1>
+            <h2>Area: <span id="area">Loading...</span></h2>
+            <h2>Area Code: <span id="areaCode">Loading...</span></h2>
+            <div class="dashboard">
+                <div class="card" onclick="showDetails('accidents')">Accidents Reported<span id="accidents">Loading...</span></div>
+                <div class="card" onclick="showDetails('violations')">Traffic Violations<span id="violations">Loading...</span></div>
+                <div class="card" onclick="showDetails('fines')">Fine Generated<span id="fines">Loading...</span></div>
+                <div class="card" onclick="showDetails('helmet')">Helmet Violations<span id="helmet">Loading...</span></div>
+                <div class="card" onclick="showDetails('speeding')">Overspeeding Vehicles<span id="speeding">Loading...</span></div>
+            </div>
+        </div>
+        <div class="video-map-container">
+            <div class="video-container">
+                <h2>Traffic Footage</h2>
+                <video id="traffic-video" autoplay loop muted playsinline>
+                    <source src="cctv.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="map-container">
+                <h2>Live Map</h2>
+                <iframe 
+                    frameborder="0" 
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=77.0,28.5,78.0,29.5&layer=mapnik" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateStats() {
+            const areas = ["Lashkar", "Morar", "Thatipur", "Gola Ka Mandir", "Hazira", "Padav"];
+            const areaCodes = ["474001", "474005", "474011", "474020", "474010", "474002"];
+            let index = 0;
+
+            setInterval(() => {
+                document.getElementById("area").textContent = areas[index];
+                document.getElementById("areaCode").textContent = areaCodes[index];
+                document.getElementById("accidents").textContent = Math.floor(Math.random() * 5);
+                document.getElementById("violations").textContent = Math.floor(Math.random() * 50);
+                document.getElementById("fines").textContent = "₹" + (Math.floor(Math.random() * 5000));
+                document.getElementById("helmet").textContent = "Plate: XYZ" + Math.floor(Math.random() * 999);
+                document.getElementById("speeding").textContent = "Plate: ABC" + Math.floor(Math.random() * 999);
+                index = (index + 1) % areas.length;
+            }, 5000);
+        }
+
+        function changeTrafficLight() {
+            const lights = ["red", "yellow", "green"];
+
+            function getRandomDelay() {
+                return Math.floor(Math.random() * (5000 - 2000) + 2000);
+            }
+
+            function switchLight() {
+                const activeLight = lights[Math.floor(Math.random() * lights.length)];
+                lights.forEach(light => document.getElementById(light).style.background = "grey");
+                document.getElementById(activeLight).style.background = activeLight;
+                setTimeout(switchLight, getRandomDelay());
+            }
+
+            switchLight();
+        }
+
+        updateStats();
+        changeTrafficLight();
+    </script>
+</body>
+</html>
